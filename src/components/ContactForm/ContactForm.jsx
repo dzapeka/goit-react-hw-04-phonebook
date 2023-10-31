@@ -1,71 +1,69 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import styles from './ContactForm.module.css';
 
-const INITIAL_STATE = {
-  name: '',
-  number: '',
-};
+export const ContactForm = ({ onSubmit }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-export class ContactForm extends Component {
-  state = { ...INITIAL_STATE };
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
 
-  nameInputId = nanoid();
-  numberInputId = nanoid();
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit({ ...this.state });
-    this.reset();
+    onSubmit({ name, number });
+    reset();
   };
 
-  reset = () => {
-    this.setState({ ...INITIAL_STATE });
+  const reset = () => {
+    setName('');
+    setNumber('');
   };
 
-  handleChange = event => {
+  const handleChange = event => {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
+    const stateFunctions = {
+      name: setName,
+      number: setNumber,
+    };
+
+    stateFunctions[name]?.(value);
   };
 
-  render() {
-    const { name, number } = this.state;
-
-    return (
-      <form onSubmit={this.handleSubmit} className={styles.contactForm}>
-        <label htmlFor={this.nameInputId}>
-          <p className={styles.labelText}>Name</p>
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={this.handleChange}
-            id={this.nameInputId}
-            autoComplete="off"
-            required
-            pattern="^[A-Za-z\- ']+$"
-          />
-        </label>
-        <label htmlFor={this.numberInputId}>
-          <p className={styles.labelText}>Number</p>
-          <input
-            className="phoneNumberInput"
-            type="tel"
-            name="number"
-            value={number}
-            onChange={this.handleChange}
-            id={this.numberInputId}
-            autoComplete="off"
-            required
-            pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
-            placeholder="xxx-xx-xx"
-            maxLength="9"
-          />
-        </label>
-        <button type="submit" className={styles.addContactBtn}>
-          Add contact
-        </button>
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={handleSubmit} className={styles.contactForm}>
+      <label htmlFor={nameInputId}>
+        <p className={styles.labelText}>Name</p>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={handleChange}
+          id={nameInputId}
+          autoComplete="off"
+          required
+          pattern="^[A-Za-z\- ']+$"
+        />
+      </label>
+      <label htmlFor={numberInputId}>
+        <p className={styles.labelText}>Number</p>
+        <input
+          className="phoneNumberInput"
+          type="tel"
+          name="number"
+          value={number}
+          onChange={handleChange}
+          id={numberInputId}
+          autoComplete="off"
+          required
+          pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
+          placeholder="xxx-xx-xx"
+          maxLength="9"
+        />
+      </label>
+      <button type="submit" className={styles.addContactBtn}>
+        Add contact
+      </button>
+    </form>
+  );
+};
